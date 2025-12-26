@@ -7,6 +7,7 @@ const config = {
   server: 'DESKTOP-5EU8KIE',
   database: 'DataWarehouse',
   port: 1433,
+  requestTimeout: 30000,
   options: {
     trustServerCertificate: true,
   },

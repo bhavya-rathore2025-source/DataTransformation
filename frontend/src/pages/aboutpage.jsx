@@ -1,15 +1,12 @@
-import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+import './aboutpage.css'
+
 export function AboutPage() {
-  const [bronze, setBronze] = useState()
-  const fetchBronze = async () => {
-    const response = await axios.get('http://localhost:5000/api/bronze/customers')
-    setBronze(response.data)
-    console.log(response.data)
-  }
+  const navigate = useNavigate()
 
   return (
-    <>
+    <div className='about-container'>
       <section className='project-overview'>
         <h1>Project Overview</h1>
 
@@ -27,9 +24,11 @@ export function AboutPage() {
           A React-based frontend is used to fetch and display the transformed data, allowing users to visually explore how data improves at each stage
           of the pipeline.
         </p>
-      </section>
 
-      <button onClick={fetchBronze}>Bronze data</button>
-    </>
+        <div className='button-group'>
+          <button onClick={() => navigate('/')}>Back</button>
+        </div>
+      </section>
+    </div>
   )
 }

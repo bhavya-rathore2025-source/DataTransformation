@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import DataTable from '../components/DataTable'
 import '../styles/bronze.css'
+import { useNavigate } from 'react-router-dom'
 
 const PAGE_SIZE = 100
 
 export function BronzePage() {
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('customers')
   const [customers, setCustomers] = useState([])
   const [products, setProducts] = useState([])
@@ -45,6 +47,9 @@ export function BronzePage() {
       <div className='bronze-left'>
         {/* Tabs */}
         <div className='tabs'>
+          <button className='back-btn' onClick={() => navigate('/')}>
+            ← Dashboard
+          </button>
           <button
             className={activeTab === 'customers' ? 'active' : ''}
             onClick={() => {

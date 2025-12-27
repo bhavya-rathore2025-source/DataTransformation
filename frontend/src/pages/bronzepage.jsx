@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import DataTable from '../components/DataTable'
 import '../styles/bronze.css'
+import '../styles/common.css'
 import { useNavigate } from 'react-router-dom'
 
 const PAGE_SIZE = 100
@@ -45,11 +46,11 @@ export function BronzePage() {
     <div className='bronze-page'>
       {/* LEFT SIDE */}
       <div className='bronze-left'>
+        <button className='dashboard-arrow' onClick={() => navigate('/')} title='Back to Dashboard'>
+          ←
+        </button>
         {/* Tabs */}
         <div className='tabs'>
-          <button className='back-btn' onClick={() => navigate('/')}>
-            ← Dashboard
-          </button>
           <button
             className={activeTab === 'customers' ? 'active' : ''}
             onClick={() => {
@@ -66,6 +67,9 @@ export function BronzePage() {
               setVisibleCount(PAGE_SIZE)
             }}>
             Products
+          </button>
+          <button className='back-btn' onClick={() => navigate('/silver')}>
+            Silver
           </button>
         </div>
 

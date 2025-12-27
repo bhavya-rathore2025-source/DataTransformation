@@ -1,0 +1,25 @@
+.dashboard-arrow {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background-color: #e5e7eb;
+  color: #0f172a;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin-bottom: 15px;
+}
+
+.dashboard-arrow:hover {
+  background-color: #cbd5f5;
+  transform: translateX(-2px);
+}
+
+.dashboard-arrow:active {
+  transform: scale(0.95);
+}

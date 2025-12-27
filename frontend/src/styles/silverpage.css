@@ -1,0 +1,32 @@
+/* Layout */
+.layer-page {
+  display: flex;
+  height: 100vh;
+  background: #0f172a;
+}
+
+/* LEFT */
+.layer-left {
+  width: 50%;
+  padding: 20px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+/* RIGHT */
+.layer-right {
+  width: 50%;
+  padding: 24px;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+/* Optional Silver polish */
+.layer-left table th {
+  background: #e2e8f0;
+}
+
+.layer-left table tr:hover td {
+  background: #f1f5f9;
+}

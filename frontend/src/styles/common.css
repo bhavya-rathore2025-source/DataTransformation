@@ -86,3 +86,10 @@
 .right-controls {
   justify-content: flex-end;
 }
+.layer-left {
+  width: 50%;
+  padding: 20px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}

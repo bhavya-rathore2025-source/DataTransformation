@@ -6,27 +6,92 @@
 }
 
 /* LEFT */
-.layer-left {
-  width: 50%;
-  padding: 20px;
-  background: #f8fafc;
-  display: flex;
-  flex-direction: column;
+
+/* ===== Silver Table Styling ONLY ===== */
+
+/* soften table borders */
+.silver-page table {
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-/* RIGHT */
-.layer-right {
+/* header */
+.silver-page th {
+  background: #e2e8f0;
+  color: #0f172a;
+  font-weight: 600;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+/* cells */
+.silver-page td {
+  border-bottom: 1px solid #e5e7eb;
+  color: #0f172a;
+}
+
+/* zebra rows (very subtle) */
+.silver-page tbody tr:nth-child(even) td {
+  background: #f8fafc;
+}
+
+/* hover */
+.silver-page tbody tr:hover td {
+  background: #eef2ff;
+}
+
+/* slightly more breathing room */
+.silver-page th,
+.silver-page td {
+  padding: 10px 12px;
+}
+
+/* ===== Silver Right Panel ONLY ===== */
+
+.silver-page .layer-right {
   width: 50%;
-  padding: 24px;
+  padding: 28px;
   background: #0f172a;
+  color: #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.silver-page .summary-block {
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 4px solid #c0c0c0;
+  padding: 14px 16px;
+  border-radius: 6px;
+}
+
+.silver-page .summary-block h4 {
+  margin-bottom: 8px;
+  color: #f8fafc;
+  font-weight: 600;
+}
+
+.silver-page .summary-block p {
+  margin: 6px 0;
+  font-size: 14px;
   color: #e5e7eb;
 }
 
-/* Optional Silver polish */
-.layer-left table th {
-  background: #e2e8f0;
+.silver-page .summary-text {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 14px 16px;
+  border-radius: 6px;
+  line-height: 1.6;
+  font-size: 14px;
+  color: #cbd5f5;
 }
 
-.layer-left table tr:hover td {
-  background: #f1f5f9;
+.silver-page .status {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.silver-page .status-ok {
+  color: #22c55e;
+  font-weight: 600;
 }

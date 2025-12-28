@@ -45,7 +45,7 @@ export function SilverPage() {
   const displayedData = activeData.slice(0, visibleCount)
 
   return (
-    <div className='layer-page'>
+    <div className='layer-page silver-page'>
       {/* LEFT */}
       <div className='layer-left'>
         {/* Navigation + Tabs */}

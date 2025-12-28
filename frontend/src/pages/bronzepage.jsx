@@ -46,31 +46,37 @@ export function BronzePage() {
     <div className='bronze-page'>
       {/* LEFT SIDE */}
       <div className='bronze-left'>
-        <button className='dashboard-arrow' onClick={() => navigate('/')} title='Back to Dashboard'>
-          ←
-        </button>
-        {/* Tabs */}
-        <div className='tabs'>
-          <button
-            className={activeTab === 'customers' ? 'active' : ''}
-            onClick={() => {
-              setActiveTab('customers')
-              setVisibleCount(PAGE_SIZE)
-            }}>
-            Customers
-          </button>
+        <div className='tabs-row'>
+          <div className='left-controls'>
+            <button className='dashboard-arrow' onClick={() => navigate('/')} title='Back to Dashboard'>
+              ←
+            </button>
+          </div>
 
-          <button
-            className={activeTab === 'products' ? 'active' : ''}
-            onClick={() => {
-              setActiveTab('products')
-              setVisibleCount(PAGE_SIZE)
-            }}>
-            Products
-          </button>
-          <button className='back-btn' onClick={() => navigate('/silver')}>
-            Silver
-          </button>
+          {/* Tabs */}
+          <div className='tabs'>
+            <button
+              className={activeTab === 'customers' ? 'active' : ''}
+              onClick={() => {
+                setActiveTab('customers')
+                setVisibleCount(PAGE_SIZE)
+              }}>
+              Customers
+            </button>
+            <button
+              className={activeTab === 'products' ? 'active' : ''}
+              onClick={() => {
+                setActiveTab('products')
+                setVisibleCount(PAGE_SIZE)
+              }}>
+              Products
+            </button>
+          </div>
+          <div className='right-controls'>
+            <button className='layer-nav-btn silver' onClick={() => navigate('/silver')}>
+              Silver
+            </button>
+          </div>
         </div>
 
         {/* Table */}

@@ -15,44 +15,6 @@
   display: flex;
   flex-direction: column;
 }
-.tabs-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 12px;
-}
-
-.back-btn {
-  padding: 6px 12px;
-  border: none;
-  background: #e5e7eb;
-  cursor: pointer;
-  font-weight: 600;
-  border-radius: 4px;
-}
-
-.back-btn:hover {
-  background: #cbd5f5;
-}
-
-.tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.tabs button {
-  padding: 8px 16px;
-  border: none;
-  background: #e2e8f0;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.tabs button.active {
-  background: #0f172a;
-  color: white;
-}
 
 .table-wrapper {
   overflow: auto;

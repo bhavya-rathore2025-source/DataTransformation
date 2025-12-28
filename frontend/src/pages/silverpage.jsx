@@ -50,10 +50,16 @@ export function SilverPage() {
       <div className='layer-left'>
         {/* Navigation + Tabs */}
         <div className='tabs-row'>
-          <button className='dashboard-arrow' onClick={() => navigate('/')} title='Back to Dashboard'>
-            ←
-          </button>
+          <div className='left-controls'>
+            <button className='dashboard-arrow' onClick={() => navigate('/')} title='Back to Dashboard'>
+              ←
+            </button>
+            <button className='layer-nav-btn bronze' onClick={() => navigate('/bronze')}>
+              Bronze
+            </button>
+          </div>
 
+          {/* Tabs */}
           <div className='tabs'>
             <button
               className={activeTab === 'customers' ? 'active' : ''}
@@ -63,7 +69,6 @@ export function SilverPage() {
               }}>
               Customers
             </button>
-
             <button
               className={activeTab === 'products' ? 'active' : ''}
               onClick={() => {
@@ -71,6 +76,11 @@ export function SilverPage() {
                 setVisibleCount(PAGE_SIZE)
               }}>
               Products
+            </button>
+          </div>
+          <div className='right-controls'>
+            <button className='layer-nav-btn gold' onClick={() => navigate('/gold')}>
+              Gold
             </button>
           </div>
         </div>

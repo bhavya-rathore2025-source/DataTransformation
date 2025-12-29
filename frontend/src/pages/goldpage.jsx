@@ -159,13 +159,13 @@ export function GoldPage() {
               <strong>Total Sales:</strong> ₹{summary.total_sales_amount.toLocaleString()}
             </p>
             <p>
-              <strong>Total Orders:</strong> {summary.total_orders}
+              <strong>Total Orders:</strong> {summary.total_orders.toLocaleString()}
             </p>
             <p>
-              <strong>Total Quantity:</strong> {summary.total_quantity}
+              <strong>Total Quantity:</strong> {summary.total_quantity.toLocaleString()}
             </p>
             <p>
-              <strong>Avg Order Value:</strong> ₹{summary.avg_order_value}
+              <strong>Avg Order Value:</strong> ₹{summary.avg_order_value.toLocaleString()}
             </p>
           </div>
         )}

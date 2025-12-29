@@ -141,3 +141,21 @@ tbody tr:hover td {
 .loading {
   font-weight: 600;
 }
+/* ===== Bronze Search Bar ===== */
+
+.bronze-page .search-bar {
+  margin: 10px 0 14px;
+}
+
+.bronze-page .search-bar input {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+}
+
+.bronze-page .search-bar input:focus {
+  outline: none;
+  border-color: #64748b;
+}

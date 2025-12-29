@@ -107,7 +107,7 @@
   background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
   color: #374151;
   border-radius: 12px;
-  padding: 20px;
+  padding: 10px;
   box-shadow: 0 4px 16px rgba(75, 85, 99, 0.2);
   border: 1px solid #e5e7eb;
 }
@@ -119,7 +119,7 @@
 }
 
 .silver-page .summary-block p {
-  margin: 8px 0;
+  margin: 4px 0;
   font-weight: 500;
   font-size: 14px;
 }
@@ -144,4 +144,33 @@
 .silver-page .status-ok {
   color: #10b981;
   font-weight: 600;
+}
+/* ===== Silver Search ===== */
+
+.silver-page .silver-search {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0 14px;
+}
+
+.silver-page .silver-search select,
+.silver-page .silver-search input {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+}
+
+.silver-page .silver-search select {
+  background: #f8fafc;
+}
+
+.silver-page .silver-search input {
+  flex: 1;
+}
+
+.silver-page .silver-search input:focus,
+.silver-page .silver-search select:focus {
+  outline: none;
+  border-color: #64748b;
 }

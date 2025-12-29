@@ -16,6 +16,8 @@ export function SilverPage() {
   const [summary, setSummary] = useState(null)
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [loading, setLoading] = useState(false)
+  const [searchField, setSearchField] = useState('name')
+  const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
     fetchData()
@@ -42,7 +44,30 @@ export function SilverPage() {
   }
 
   const activeData = activeTab === 'customers' ? customers : products
-  const displayedData = activeData.slice(0, visibleCount)
+  const searchFieldMap = {
+    customers: {
+      name: ['cst_firstname', 'cst_lastname'],
+      key: ['cst_key'],
+    },
+    products: {
+      name: ['prd_nm'],
+      key: ['prd_key'],
+    },
+  }
+  const filteredData = activeData.filter((row) => {
+    if (!searchTerm) return true
+
+    const fieldsToSearch = searchFieldMap[activeTab][searchField]
+
+    return fieldsToSearch.some((field) => {
+      const value = row[field]
+      if (!value) return false
+
+      return value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    })
+  })
+
+  const displayedData = filteredData.slice(0, visibleCount)
 
   return (
     <div className='layer-page silver-page'>
@@ -83,6 +108,28 @@ export function SilverPage() {
               Gold
             </button>
           </div>
+        </div>
+        <div className='silver-search'>
+          <select
+            value={searchField}
+            onChange={(e) => {
+              setSearchField(e.target.value)
+              setSearchTerm('')
+              setVisibleCount(PAGE_SIZE)
+            }}>
+            <option value='name'>Search by Name</option>
+            <option value='key'>Search by Key</option>
+          </select>
+
+          <input
+            type='text'
+            placeholder={`Search ${searchField}...`}
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value)
+              setVisibleCount(PAGE_SIZE)
+            }}
+          />
         </div>
 
         {/* Table */}
@@ -129,6 +176,7 @@ export function SilverPage() {
               <h4>Cleaning Applied</h4>
               <p>Trimmed strings: {summary.trimmedStrings}</p>
               <p>Date corrections: {summary.dateCorrections}</p>
+              <p>Data standardization done</p>
             </div>
           </>
         )}

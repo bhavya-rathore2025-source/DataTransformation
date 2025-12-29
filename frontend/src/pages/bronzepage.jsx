@@ -14,6 +14,7 @@ export function BronzePage() {
   const [products, setProducts] = useState([])
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [loading, setLoading] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
     fetchData()
@@ -36,7 +37,13 @@ export function BronzePage() {
   }
 
   const activeData = activeTab === 'customers' ? customers : products
-  const displayedData = activeData.slice(0, visibleCount)
+  const filteredData = activeData.filter((row) => {
+    if (!searchTerm) return true
+
+    return Object.values(row).join(' ').toLowerCase().includes(searchTerm.toLowerCase())
+  })
+
+  const displayedData = filteredData.slice(0, visibleCount)
 
   const loadMore = () => {
     setVisibleCount((prev) => prev + PAGE_SIZE)
@@ -84,6 +91,18 @@ export function BronzePage() {
           <p className='loading'>Loading raw bronze data...</p>
         ) : (
           <>
+            <div className='search-bar'>
+              <input
+                type='text'
+                placeholder='Search raw bronze data...'
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value)
+                  setVisibleCount(PAGE_SIZE)
+                }}
+              />
+            </div>
+
             <DataTable data={displayedData} />
 
             {visibleCount < activeData.length && (

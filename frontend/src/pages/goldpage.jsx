@@ -24,13 +24,15 @@ export function GoldPage() {
   const [activeTab, setActiveTab] = useState('customers')
   const [customers, setCustomers] = useState([])
   const [products, setProducts] = useState([])
-  const [sales, setSales] = useState([])
   const [summary, setSummary] = useState(null)
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
-  const [loading, setLoading] = useState(false)
   const [searchBy, setSearchBy] = useState('order_number')
   const [searchValue, setSearchValue] = useState('')
   const [sortBy, setSortBy] = useState('')
+  const [salesRows, setSalesRows] = useState([])
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     fetchGoldData()
@@ -50,16 +52,45 @@ export function GoldPage() {
       const [custRes, prodRes, salesRes, summaryRes] = await Promise.all([
         axios.get('http://localhost:5000/api/gold/customers'),
         axios.get('http://localhost:5000/api/gold/products'),
-        axios.get('http://localhost:5000/api/gold/sales'),
+        axios.get('http://localhost:5000/api/gold/sales?page=1'),
         axios.get('http://localhost:5000/api/gold/summary'),
       ])
 
       setCustomers(custRes.data)
       setProducts(prodRes.data)
-      setSales(salesRes.data)
+      setSalesRows(salesRes.data)
       setSummary(summaryRes.data)
     } catch (err) {
       console.error('Failed to fetch gold data', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+  const fetchGoldSales = async ({ reset = false } = {}) => {
+    try {
+      setLoading(true)
+
+      const nextPage = reset ? 1 : page
+
+      const res = await axios.get('http://localhost:5000/api/gold/sales', {
+        params: {
+          searchBy,
+          searchValue,
+          sortBy: sortBy ? sortBy.split('_')[0] : undefined,
+          order: sortBy?.endsWith('_desc') ? 'desc' : 'asc',
+          page: nextPage,
+          limit: 100,
+        },
+      })
+
+      const { data, hasMore } = res.data
+
+      setSalesRows((prev) => (reset ? data : [...prev, ...data]))
+
+      setHasMore(hasMore)
+      setPage(nextPage + 1)
+    } catch (err) {
+      console.error('Failed to fetch gold sales', err)
     } finally {
       setLoading(false)
     }
@@ -71,8 +102,8 @@ export function GoldPage() {
   const activeRawData = useMemo(() => {
     if (activeTab === 'customers') return customers
     if (activeTab === 'products') return products
-    return sales
-  }, [activeTab, customers, products, sales])
+    return salesRows
+  }, [activeTab, customers, products, salesRows])
   const searchOptions = {
     customers: [
       { label: 'Name', value: 'name' },
@@ -160,6 +191,10 @@ export function GoldPage() {
               onClick={() => {
                 setActiveTab('sales')
                 setVisibleCount(PAGE_SIZE)
+                setSalesRows([]) // clear old data
+                setPage(1) // reset page
+                setHasMore(true) // assume more data exists
+                fetchGoldSales({ reset: true }) // fetch page 1
               }}>
               Sales
             </button>
@@ -183,6 +218,11 @@ export function GoldPage() {
               className='search-btn'
               onClick={() => {
                 console.log('SEARCH CLICKED', { searchBy, searchValue })
+                setSalesRows([])
+                setPage(1)
+                setHasMore(true)
+                fetchGoldSales({ reset: true })
+
                 // API call will go here later
               }}>
               Search
@@ -218,7 +258,13 @@ export function GoldPage() {
 
             {visibleCount < activeRawData.length && (
               <div className='load-more'>
-                <button onClick={() => setVisibleCount((v) => v + PAGE_SIZE)}>Load more</button>
+                <button
+                  onClick={() => {
+                    setVisibleCount((v) => v + PAGE_SIZE)
+                    fetchGoldSales() // reset = false by default
+                  }}>
+                  Load more
+                </button>
               </div>
             )}
           </>

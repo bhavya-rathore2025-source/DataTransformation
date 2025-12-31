@@ -28,10 +28,20 @@ export function GoldPage() {
   const [summary, setSummary] = useState(null)
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [loading, setLoading] = useState(false)
+  const [searchBy, setSearchBy] = useState('order_number')
+  const [searchValue, setSearchValue] = useState('')
+  const [sortBy, setSortBy] = useState('')
 
   useEffect(() => {
     fetchGoldData()
   }, [])
+  useEffect(() => {
+    // Reset search when tab changes
+    const defaultSearchBy = searchOptions[activeTab][0]?.value || ''
+    setSearchBy(defaultSearchBy)
+    setSearchValue('')
+    setSortBy('')
+  }, [activeTab])
 
   const fetchGoldData = async () => {
     try {
@@ -63,6 +73,31 @@ export function GoldPage() {
     if (activeTab === 'products') return products
     return sales
   }, [activeTab, customers, products, sales])
+  const searchOptions = {
+    customers: [
+      { label: 'Name', value: 'name' },
+      { label: 'Customer Number', value: 'customer_number' },
+      { label: 'Country', value: 'country' },
+    ],
+    products: [
+      { label: 'Product Name', value: 'product_name' },
+      { label: 'Category', value: 'category' },
+    ],
+    sales: [
+      { label: 'Order Number', value: 'order_number' },
+      { label: 'Customer Key', value: 'customer_key' },
+      { label: 'Product Key', value: 'product_key' },
+    ],
+  }
+  const sortOptions = {
+    sales: [
+      { label: 'Order Date (Newest)', value: 'order_date_desc' },
+      { label: 'Sales Amount (High → Low)', value: 'sales_amount_desc' },
+      { label: 'Sales Amount (Low → High)', value: 'sales_amount_asc' },
+    ],
+    customers: [],
+    products: [],
+  }
 
   /* -----------------------------------
      Slice FIRST (performance critical)
@@ -131,6 +166,47 @@ export function GoldPage() {
           </div>
 
           <div className='right-controls' />
+        </div>
+        <div className='gold-controls'>
+          <div className='gold-search'>
+            <select value={searchBy} onChange={(e) => setSearchBy(e.target.value)}>
+              {searchOptions[activeTab].map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  Search by {opt.label}
+                </option>
+              ))}
+            </select>
+
+            <input type='text' placeholder='Enter search value...' value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+
+            <button
+              className='search-btn'
+              onClick={() => {
+                console.log('SEARCH CLICKED', { searchBy, searchValue })
+                // API call will go here later
+              }}>
+              Search
+            </button>
+          </div>
+
+          {sortOptions[activeTab]?.length > 0 && (
+            <div className='gold-sort'>
+              <select
+                value={sortBy}
+                onChange={(e) => {
+                  setSortBy(e.target.value)
+                  console.log('SORT CHANGED', e.target.value)
+                  // API call will go here later
+                }}>
+                <option value=''>Sort by</option>
+                {sortOptions[activeTab].map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
 
         {/* Table */}

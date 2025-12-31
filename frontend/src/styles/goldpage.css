@@ -131,3 +131,44 @@
   color: #10b981;
   font-weight: 600;
 }
+/* ===== Gold Search & Sort Controls ===== */
+
+.gold-page .gold-controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0 16px;
+  flex-wrap: wrap;
+}
+
+.gold-page .gold-search {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+}
+
+.gold-page .gold-search select,
+.gold-page .gold-search input,
+.gold-page .gold-sort select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+}
+
+.gold-page .gold-search input {
+  flex: 1;
+}
+
+.gold-page .search-btn {
+  background: #ca8a04;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.gold-page .search-btn:hover {
+  background: #a16207;
+}

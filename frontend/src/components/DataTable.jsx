@@ -1,6 +1,10 @@
-export default function DataTable({ data }) {
-  if (!data || data.length === 0) {
-    return <p>No data available.</p>
+export default function DataTable({ data, loading }) {
+  console.log(loading)
+
+  if (loading) {
+    return <p>Loading data</p>
+  } else if (!loading && data.length === 0) {
+    return <p>No data available</p>
   }
 
   const headers = Object.keys(data[0])

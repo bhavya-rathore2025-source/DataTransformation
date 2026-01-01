@@ -16,16 +16,58 @@ export const getGoldCustomers = async (req, res) => {
   try {
     const pool = await poolPromise
 
-    const result = await pool.request().query(`
-      SELECT * FROM Gold.dm_customers
-    `)
+    const { searchBy, searchValue, page = 1, limit = 100 } = req.query
 
-    res.json(result.recordset)
+    const pageNum = parseInt(page)
+    const limitNum = parseInt(limit)
+    const offset = (pageNum - 1) * limitNum
+
+    // 🔒 Whitelisted search fields (MATCHING DB VIEW)
+    const SEARCH_FIELDS = {
+      first_name: 'first_name',
+      customer_number: 'customer_number',
+      country: 'country',
+    }
+
+    let whereClause = ''
+    const request = pool.request()
+
+    // 🔍 Backend search
+    if (searchBy && searchValue && SEARCH_FIELDS[searchBy]) {
+      whereClause = `WHERE ${SEARCH_FIELDS[searchBy]} LIKE @searchValue`
+      request.input('searchValue', `%${searchValue}%`)
+    }
+
+    // ⚠️ ORDER BY is mandatory for pagination
+    const query = `
+      SELECT *
+      FROM Gold.dim_customers
+      ${whereClause}
+      ORDER BY customer_number
+      OFFSET @offset ROWS
+      FETCH NEXT @limit ROWS ONLY
+    `
+
+    request.input('offset', offset)
+    request.input('limit', limitNum)
+
+    const result = await request.query(query)
+
+    res.json({
+      data: result.recordset,
+      page: pageNum,
+      limit: limitNum,
+      hasMore: result.recordset.length === limitNum,
+    })
   } catch (err) {
-    console.error(err)
-    res.status(500).json({ message: 'Failed to fetch gold customers', error: err })
+    console.error('Failed to fetch Gold customers:', err)
+    res.status(500).json({
+      message: 'Failed to fetch Gold customers',
+      error: err.message,
+    })
   }
 }
+
 export const getGoldProducts = async (req, res) => {
   try {
     const pool = await poolPromise

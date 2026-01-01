@@ -33,6 +33,11 @@ export function GoldPage() {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
+  // Gold Customers (backend paginated)
+  const [customerRows, setCustomerRows] = useState([])
+  const [productRows, setProductRows] = useState([])
+  const [customerPage, setCustomerPage] = useState(1)
+  const [customerHasMore, setCustomerHasMore] = useState(true)
 
   useEffect(() => {
     fetchGoldData()
@@ -43,6 +48,9 @@ export function GoldPage() {
     setSearchBy(defaultSearchBy)
     setSearchValue('')
     setSortBy('')
+    if (activeTab === 'customers' && customerRows.length === 0) {
+      fetchGoldCustomers({ reset: true })
+    }
   }, [activeTab])
 
   const fetchGoldData = async () => {
@@ -50,9 +58,7 @@ export function GoldPage() {
       setLoading(true)
 
       const [custRes, prodRes, salesRes, summaryRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/gold/customers'),
         axios.get('http://localhost:5000/api/gold/products'),
-        axios.get('http://localhost:5000/api/gold/sales?page=1'),
         axios.get('http://localhost:5000/api/gold/summary'),
       ])
 
@@ -66,6 +72,22 @@ export function GoldPage() {
       setLoading(false)
     }
   }
+  const handleSearch = () => {
+    if (activeTab === 'sales') {
+      setSalesRows([])
+      setPage(1)
+      setHasMore(true)
+      fetchGoldSales({ reset: true })
+    }
+
+    if (activeTab === 'customers') {
+      setCustomerRows([])
+      setCustomerPage(1)
+      setCustomerHasMore(true)
+      fetchGoldCustomers({ reset: true })
+    }
+  }
+
   const fetchGoldSales = async ({ reset = false } = {}) => {
     try {
       setLoading(true)
@@ -95,6 +117,29 @@ export function GoldPage() {
       setLoading(false)
     }
   }
+  const fetchGoldCustomers = async ({ reset = false } = {}) => {
+    try {
+      const nextPage = reset ? 1 : customerPage
+
+      const res = await axios.get('http://localhost:5000/api/gold/customers', {
+        params: {
+          searchBy,
+          searchValue,
+          page: nextPage,
+          limit: PAGE_SIZE,
+        },
+      })
+
+      const { data, hasMore } = res.data
+
+      setCustomerRows((prev) => (reset ? data : [...prev, ...data]))
+
+      setCustomerHasMore(hasMore)
+      setCustomerPage(nextPage + 1)
+    } catch (err) {
+      console.error('Failed to fetch gold customers', err)
+    }
+  }
 
   /* -----------------------------------
      Pick RAW active dataset (NO work)
@@ -106,7 +151,7 @@ export function GoldPage() {
   }, [activeTab, customers, products, salesRows])
   const searchOptions = {
     customers: [
-      { label: 'Name', value: 'name' },
+      { label: 'First Name', value: 'first_name' },
       { label: 'Customer Number', value: 'customer_number' },
       { label: 'Country', value: 'country' },
     ],
@@ -150,6 +195,7 @@ export function GoldPage() {
       due_date: formatDate(row.due_date),
     }))
   }, [activeTab, slicedData])
+  const tableData = activeTab === 'sales' ? salesRows : activeTab === 'customers' ? customerRows : productRows
 
   return (
     <div className='layer-page gold-page'>
@@ -214,17 +260,7 @@ export function GoldPage() {
 
             <input type='text' placeholder='Enter search value...' value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
 
-            <button
-              className='search-btn'
-              onClick={() => {
-                console.log('SEARCH CLICKED', { searchBy, searchValue })
-                setSalesRows([])
-                setPage(1)
-                setHasMore(true)
-                fetchGoldSales({ reset: true })
-
-                // API call will go here later
-              }}>
+            <button className='search-btn' onClick={handleSearch}>
               Search
             </button>
           </div>
@@ -254,17 +290,17 @@ export function GoldPage() {
           <p className='loading'>Loading gold data...</p>
         ) : (
           <>
-            <DataTable data={displayedData} />
+            <DataTable data={tableData} loading={loading} />
 
-            {visibleCount < activeRawData.length && (
+            {activeTab === 'sales' && hasMore && (
               <div className='load-more'>
-                <button
-                  onClick={() => {
-                    setVisibleCount((v) => v + PAGE_SIZE)
-                    fetchGoldSales() // reset = false by default
-                  }}>
-                  Load more
-                </button>
+                <button onClick={() => fetchGoldSales()}>Load more</button>
+              </div>
+            )}
+
+            {activeTab === 'customers' && customerHasMore && (
+              <div className='load-more'>
+                <button onClick={() => fetchGoldCustomers()}>Load more</button>
               </div>
             )}
           </>

@@ -44,16 +44,34 @@ export function GoldPage() {
       fetchGoldProducts({ reset: true })
     }
   }, [activeTab])
-  useEffect(() => {
-    fetchGoldSales({ reset: true })
-    fetchGoldCustomers({ reset: true })
-    fetchGoldCustomers({ reset: true })
-  }, [searchBy])
+
+  const resetTable = () => {
+    if (activeTab === 'sales') {
+      setSalesRows([])
+      setPage(1)
+      setHasMore(true)
+      fetchGoldSales({ reset: true })
+    }
+
+    if (activeTab === 'customers') {
+      setCustomerRows([])
+      setCustomerPage(1)
+      setCustomerHasMore(true)
+      fetchGoldCustomers({ reset: true })
+    }
+
+    if (activeTab === 'products') {
+      setProductRows([])
+      setProductPage(1)
+      setProductHasMore(true)
+      fetchGoldProducts({ reset: true })
+    }
+  }
 
   const fetchGoldData = async () => {
     try {
       setLoading(true)
-      const [summaryRes] = await axios.get('http://localhost:5000/api/gold/summary')
+      const summaryRes = await axios.get('http://localhost:5000/api/gold/summary')
       setSummary(summaryRes.data)
     } catch (err) {
       console.error('Failed to fetch gold data', err)
@@ -61,79 +79,20 @@ export function GoldPage() {
       setLoading(false)
     }
   }
-  const handleSearch = () => {
-    if (activeTab === 'sales') {
-      setSalesRows([])
-      setPage(1)
-      setHasMore(true)
-      fetchGoldSales({ reset: true })
-    }
 
-    if (activeTab === 'customers') {
-      setCustomerRows([])
-      setCustomerPage(1)
-      setCustomerHasMore(true)
-      fetchGoldCustomers({ reset: true })
-    }
-
-    if (activeTab === 'products') {
-      setProductRows([])
-      setProductPage(1)
-      setProductHasMore(true)
-      fetchGoldProducts({ reset: true })
-    }
-  }
   const handleSearchByChange = (value) => {
     setSearchBy(value)
     setSearchValue('') // 👈 clear input
 
     // Reset based on active tab
-    if (activeTab === 'sales') {
-      setSalesRows([])
-      setPage(1)
-      setHasMore(true)
-      fetchGoldSales({ reset: true })
-    }
-
-    if (activeTab === 'customers') {
-      setCustomerRows([])
-      setCustomerPage(1)
-      setCustomerHasMore(true)
-      fetchGoldCustomers({ reset: true })
-    }
-
-    if (activeTab === 'products') {
-      setProductRows([])
-      setProductPage(1)
-      setProductHasMore(true)
-      fetchGoldProducts({ reset: true })
-    }
+    resetTable()
   }
   const handleSearchInputChange = (value) => {
     setSearchValue(value)
 
     // If input cleared → reload unfiltered data
     if (value === '') {
-      if (activeTab === 'sales') {
-        setSalesRows([])
-        setPage(1)
-        setHasMore(true)
-        fetchGoldSales({ reset: true })
-      }
-
-      if (activeTab === 'customers') {
-        setCustomerRows([])
-        setCustomerPage(1)
-        setCustomerHasMore(true)
-        fetchGoldCustomers({ reset: true })
-      }
-
-      if (activeTab === 'products') {
-        setProductRows([])
-        setProductPage(1)
-        setProductHasMore(true)
-        fetchGoldProducts({ reset: true })
-      }
+      resetTable()
     }
   }
 
@@ -219,6 +178,9 @@ export function GoldPage() {
       setLoading(false)
     }
   }
+  useEffect(() => {
+    resetTable()
+  }, [searchBy])
 
   /* -----------------------------------
      Pick RAW active dataset (NO work)
@@ -313,7 +275,7 @@ export function GoldPage() {
 
             <input type='text' placeholder='Enter search value...' value={searchValue} onChange={(e) => handleSearchInputChange(e.target.value)} />
 
-            <button className='search-btn' onClick={handleSearch}>
+            <button className='search-btn' onClick={resetTable}>
               Search
             </button>
           </div>

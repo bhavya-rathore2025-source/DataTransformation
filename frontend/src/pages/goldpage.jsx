@@ -146,18 +146,18 @@ export function GoldPage() {
     }
   }
 
-  const fetchGoldSales = async ({ reset = false } = {}) => {
+  const fetchGoldSales = async ({ reset = false, sortOverride } = {}) => {
     try {
       setLoading(true)
 
       const nextPage = reset ? 1 : page
+      const effectiveSortBy = sortOverride ?? sortBy
 
       const res = await axios.get('http://localhost:5000/api/gold/sales', {
         params: {
           searchBy,
           searchValue,
-          sortBy: sortBy ? sortBy.split('_')[0] : undefined,
-          order: sortBy?.endsWith('_desc') ? 'desc' : 'asc',
+          sortBy: effectiveSortBy, // 👈 send EXACT value
           page: nextPage,
           limit: 100,
         },
@@ -358,9 +358,15 @@ export function GoldPage() {
               <select
                 value={sortBy}
                 onChange={(e) => {
-                  setSortBy(e.target.value)
-                  console.log('SORT CHANGED', e.target.value)
-                  // API call will go here later
+                  const value = e.target.value
+                  setSortBy(value)
+
+                  // Reset + reload based on active tab
+
+                  setSalesRows([])
+                  setPage(1)
+                  setHasMore(true)
+                  fetchGoldSales({ reset: true, sortOverride: value })
                 }}>
                 <option value=''>Sort by</option>
                 {sortOptions[activeTab].map((opt) => (

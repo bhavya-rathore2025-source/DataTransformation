@@ -90,6 +90,7 @@ export function SilverPage() {
               className={activeTab === 'customers' ? 'active' : ''}
               onClick={() => {
                 setActiveTab('customers')
+                setSearchTerm('')
                 setVisibleCount(PAGE_SIZE)
               }}>
               Customers
@@ -98,6 +99,7 @@ export function SilverPage() {
               className={activeTab === 'products' ? 'active' : ''}
               onClick={() => {
                 setActiveTab('products')
+                setSearchTerm('')
                 setVisibleCount(PAGE_SIZE)
               }}>
               Products

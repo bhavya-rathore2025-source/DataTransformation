@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import DataTable from '../components/DataTable'
@@ -6,26 +6,12 @@ import '../styles/goldpage.css'
 import '../styles/common.css'
 
 const PAGE_SIZE = 100
-
-// Gold-only date formatter
-function formatDate(value) {
-  if (!value) return '—'
-  const d = new Date(value)
-  return d.toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  })
-}
+console.log('code running')
 
 export function GoldPage() {
   const navigate = useNavigate()
-
   const [activeTab, setActiveTab] = useState('customers')
-  const [customers, setCustomers] = useState([])
-  const [products, setProducts] = useState([])
   const [summary, setSummary] = useState(null)
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [searchBy, setSearchBy] = useState('order_number')
   const [searchValue, setSearchValue] = useState('')
   const [sortBy, setSortBy] = useState('')
@@ -58,11 +44,16 @@ export function GoldPage() {
       fetchGoldProducts({ reset: true })
     }
   }, [activeTab])
+  useEffect(() => {
+    fetchGoldSales({ reset: true })
+    fetchGoldCustomers({ reset: true })
+    fetchGoldCustomers({ reset: true })
+  }, [searchBy])
 
   const fetchGoldData = async () => {
     try {
       setLoading(true)
-      const [summaryRes] = await Promise.all([axios.get('http://localhost:5000/api/gold/summary')])
+      const [summaryRes] = await axios.get('http://localhost:5000/api/gold/summary')
       setSummary(summaryRes.data)
     } catch (err) {
       console.error('Failed to fetch gold data', err)
@@ -232,11 +223,7 @@ export function GoldPage() {
   /* -----------------------------------
      Pick RAW active dataset (NO work)
   ----------------------------------- */
-  const activeRawData = useMemo(() => {
-    if (activeTab === 'customers') return customers
-    if (activeTab === 'products') return products
-    return salesRows
-  }, [activeTab, customers, products, salesRows])
+
   const searchOptions = {
     customers: [
       { label: 'First Name', value: 'first_name' },
@@ -263,26 +250,6 @@ export function GoldPage() {
     products: [],
   }
 
-  /* -----------------------------------
-     Slice FIRST (performance critical)
-  ----------------------------------- */
-  const slicedData = useMemo(() => {
-    return activeRawData.slice(0, visibleCount)
-  }, [activeRawData, visibleCount])
-
-  /* -----------------------------------
-     Format ONLY visible sales rows
-  ----------------------------------- */
-  const displayedData = useMemo(() => {
-    if (activeTab !== 'sales') return slicedData
-
-    return slicedData.map((row) => ({
-      ...row,
-      order_date: formatDate(row.order_date),
-      shipping_date: formatDate(row.shipping_date),
-      due_date: formatDate(row.due_date),
-    }))
-  }, [activeTab, slicedData])
   const tableData = activeTab === 'sales' ? salesRows : activeTab === 'customers' ? customerRows : productRows
 
   return (
@@ -306,7 +273,6 @@ export function GoldPage() {
               className={activeTab === 'customers' ? 'active' : ''}
               onClick={() => {
                 setActiveTab('customers')
-                setVisibleCount(PAGE_SIZE)
               }}>
               Customers
             </button>
@@ -315,7 +281,6 @@ export function GoldPage() {
               className={activeTab === 'products' ? 'active' : ''}
               onClick={() => {
                 setActiveTab('products')
-                setVisibleCount(PAGE_SIZE)
               }}>
               Products
             </button>
@@ -324,7 +289,7 @@ export function GoldPage() {
               className={activeTab === 'sales' ? 'active' : ''}
               onClick={() => {
                 setActiveTab('sales')
-                setVisibleCount(PAGE_SIZE)
+
                 setSalesRows([]) // clear old data
                 setPage(1) // reset page
                 setHasMore(true) // assume more data exists
@@ -444,3 +409,4 @@ export function GoldPage() {
     </div>
   )
 }
+//446

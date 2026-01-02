@@ -1,4 +1,5 @@
 export default function DataTable({ data, loading }) {
+  console.log(data)
   console.log(loading)
 
   if (loading) {

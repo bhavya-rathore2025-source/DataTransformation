@@ -35,9 +35,12 @@ export function GoldPage() {
   const [loading, setLoading] = useState(false)
   // Gold Customers (backend paginated)
   const [customerRows, setCustomerRows] = useState([])
-  const [productRows, setProductRows] = useState([])
   const [customerPage, setCustomerPage] = useState(1)
   const [customerHasMore, setCustomerHasMore] = useState(true)
+  // Gold Products (backend paginated)
+  const [productRows, setProductRows] = useState([])
+  const [productPage, setProductPage] = useState(1)
+  const [productHasMore, setProductHasMore] = useState(true)
 
   useEffect(() => {
     fetchGoldData()
@@ -51,20 +54,15 @@ export function GoldPage() {
     if (activeTab === 'customers' && customerRows.length === 0) {
       fetchGoldCustomers({ reset: true })
     }
+    if (activeTab === 'products' && productRows.length === 0) {
+      fetchGoldProducts({ reset: true })
+    }
   }, [activeTab])
 
   const fetchGoldData = async () => {
     try {
       setLoading(true)
-
-      const [custRes, prodRes, salesRes, summaryRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/gold/products'),
-        axios.get('http://localhost:5000/api/gold/summary'),
-      ])
-
-      setCustomers(custRes.data)
-      setProducts(prodRes.data)
-      setSalesRows(salesRes.data)
+      const [summaryRes] = await Promise.all([axios.get('http://localhost:5000/api/gold/summary')])
       setSummary(summaryRes.data)
     } catch (err) {
       console.error('Failed to fetch gold data', err)
@@ -85,6 +83,66 @@ export function GoldPage() {
       setCustomerPage(1)
       setCustomerHasMore(true)
       fetchGoldCustomers({ reset: true })
+    }
+
+    if (activeTab === 'products') {
+      setProductRows([])
+      setProductPage(1)
+      setProductHasMore(true)
+      fetchGoldProducts({ reset: true })
+    }
+  }
+  const handleSearchByChange = (value) => {
+    setSearchBy(value)
+    setSearchValue('') // 👈 clear input
+
+    // Reset based on active tab
+    if (activeTab === 'sales') {
+      setSalesRows([])
+      setPage(1)
+      setHasMore(true)
+      fetchGoldSales({ reset: true })
+    }
+
+    if (activeTab === 'customers') {
+      setCustomerRows([])
+      setCustomerPage(1)
+      setCustomerHasMore(true)
+      fetchGoldCustomers({ reset: true })
+    }
+
+    if (activeTab === 'products') {
+      setProductRows([])
+      setProductPage(1)
+      setProductHasMore(true)
+      fetchGoldProducts({ reset: true })
+    }
+  }
+  const handleSearchInputChange = (value) => {
+    setSearchValue(value)
+
+    // If input cleared → reload unfiltered data
+    if (value === '') {
+      if (activeTab === 'sales') {
+        setSalesRows([])
+        setPage(1)
+        setHasMore(true)
+        fetchGoldSales({ reset: true })
+      }
+
+      if (activeTab === 'customers') {
+        setCustomerRows([])
+        setCustomerPage(1)
+        setCustomerHasMore(true)
+        fetchGoldCustomers({ reset: true })
+      }
+
+      if (activeTab === 'products') {
+        setProductRows([])
+        setProductPage(1)
+        setProductHasMore(true)
+        fetchGoldProducts({ reset: true })
+      }
     }
   }
 
@@ -119,6 +177,7 @@ export function GoldPage() {
   }
   const fetchGoldCustomers = async ({ reset = false } = {}) => {
     try {
+      setLoading(true)
       const nextPage = reset ? 1 : customerPage
 
       const res = await axios.get('http://localhost:5000/api/gold/customers', {
@@ -138,6 +197,35 @@ export function GoldPage() {
       setCustomerPage(nextPage + 1)
     } catch (err) {
       console.error('Failed to fetch gold customers', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+  const fetchGoldProducts = async ({ reset = false } = {}) => {
+    try {
+      setLoading(true)
+
+      const nextPage = reset ? 1 : productPage
+
+      const res = await axios.get('http://localhost:5000/api/gold/products', {
+        params: {
+          searchBy,
+          searchValue,
+          page: nextPage,
+          limit: PAGE_SIZE,
+        },
+      })
+
+      const { data, hasMore } = res.data
+
+      setProductRows((prev) => (reset ? data : [...prev, ...data]))
+
+      setProductHasMore(hasMore)
+      setProductPage(nextPage + 1)
+    } catch (err) {
+      console.error('Failed to fetch gold products', err)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -250,7 +338,7 @@ export function GoldPage() {
         </div>
         <div className='gold-controls'>
           <div className='gold-search'>
-            <select value={searchBy} onChange={(e) => setSearchBy(e.target.value)}>
+            <select value={searchBy} onChange={(e) => handleSearchByChange(e.target.value)}>
               {searchOptions[activeTab].map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   Search by {opt.label}
@@ -258,7 +346,7 @@ export function GoldPage() {
               ))}
             </select>
 
-            <input type='text' placeholder='Enter search value...' value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+            <input type='text' placeholder='Enter search value...' value={searchValue} onChange={(e) => handleSearchInputChange(e.target.value)} />
 
             <button className='search-btn' onClick={handleSearch}>
               Search
@@ -294,13 +382,19 @@ export function GoldPage() {
 
             {activeTab === 'sales' && hasMore && (
               <div className='load-more'>
-                <button onClick={() => fetchGoldSales()}>Load more</button>
+                <button onClick={() => fetchGoldSales()}>{loading ? 'Loading...' : 'Load more'}</button>
               </div>
             )}
 
             {activeTab === 'customers' && customerHasMore && (
               <div className='load-more'>
-                <button onClick={() => fetchGoldCustomers()}>Load more</button>
+                <button onClick={() => fetchGoldCustomers()}>{loading ? 'Loading...' : 'Load more'}</button>
+              </div>
+            )}
+
+            {activeTab === 'products' && productHasMore && (
+              <div className='load-more'>
+                <button onClick={() => fetchGoldProducts()}>{loading ? 'Loading...' : 'Load more'}</button>
               </div>
             )}
           </>

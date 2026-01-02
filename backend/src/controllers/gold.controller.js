@@ -67,20 +67,61 @@ export const getGoldCustomers = async (req, res) => {
     })
   }
 }
-
 export const getGoldProducts = async (req, res) => {
   try {
     const pool = await poolPromise
-    const result = await pool.request().query(`
-      Select * from Gold.dm_products
-    `)
 
-    res.json(result.recordset)
-  } catch {
-    console.error(err)
-    res.status(500).json({ message: 'Failed to fetch Gold products', error: err })
+    const { searchBy, searchValue, page = 1, limit = 100 } = req.query
+
+    const pageNum = parseInt(page)
+    const limitNum = parseInt(limit)
+    const offset = (pageNum - 1) * limitNum
+
+    // 🔒 Allowed search fields ONLY
+    const SEARCH_FIELDS = {
+      product_name: 'product_name',
+      category: 'category',
+    }
+
+    let whereClause = ''
+    const request = pool.request()
+
+    // 🔍 Backend search
+    if (searchBy && searchValue && SEARCH_FIELDS[searchBy]) {
+      whereClause = `WHERE ${SEARCH_FIELDS[searchBy]} LIKE @searchValue`
+      request.input('searchValue', `%${searchValue}%`)
+    }
+
+    // ⚠️ ORDER BY is mandatory for pagination
+    const query = `
+      SELECT *
+      FROM Gold.dm_products
+      ${whereClause}
+      ORDER BY product_name
+      OFFSET @offset ROWS
+      FETCH NEXT @limit ROWS ONLY
+    `
+
+    request.input('offset', offset)
+    request.input('limit', limitNum)
+
+    const result = await request.query(query)
+
+    res.json({
+      data: result.recordset,
+      page: pageNum,
+      limit: limitNum,
+      hasMore: result.recordset.length === limitNum,
+    })
+  } catch (err) {
+    console.error('Failed to fetch Gold products:', err)
+    res.status(500).json({
+      message: 'Failed to fetch Gold products',
+      error: err.message,
+    })
   }
 }
+
 export const getGoldSales = async (req, res) => {
   try {
     const pool = await poolPromise

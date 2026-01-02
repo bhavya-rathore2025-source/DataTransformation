@@ -126,29 +126,36 @@ export const getGoldSales = async (req, res) => {
   try {
     const pool = await poolPromise
 
-    const { searchBy, searchValue, sortBy, order = 'asc', page = 1, limit = 100 } = req.query
+    const {
+      searchBy,
+      searchValue,
+      sortBy, // 👈 combined value
+      page = 1,
+      limit = 100,
+    } = req.query
 
     const pageNum = parseInt(page)
     const limitNum = parseInt(limit)
     const offset = (pageNum - 1) * limitNum
 
-    // 🔒 Whitelisted fields
+    // 🔒 Allowed search fields
     const SEARCH_FIELDS = {
       order_number: 'order_number',
       customer_key: 'customer_key',
       product_key: 'product_key',
     }
 
-    const SORT_FIELDS = {
-      sales_amount: 'sales_amount',
-      order_date: 'order_date',
-      quantity: 'quantity',
+    // 🔒 Allowed sort options (MATCH FRONTEND EXACTLY)
+    const SORT_MAP = {
+      order_date_desc: 'order_date DESC',
+      sales_amount_desc: 'sales_amount DESC',
+      sales_amount_asc: 'sales_amount ASC',
     }
 
     let whereClause = ''
-    let orderClause = 'ORDER BY order_date DESC'
+    let orderClause = 'ORDER BY order_date DESC' // default
 
-    const request = await pool.request()
+    const request = pool.request()
 
     // 🔍 Search
     if (searchBy && searchValue && SEARCH_FIELDS[searchBy]) {
@@ -156,13 +163,11 @@ export const getGoldSales = async (req, res) => {
       request.input('searchValue', `%${searchValue}%`)
     }
 
-    // 🔃 Sort
-    if (sortBy && SORT_FIELDS[sortBy]) {
-      const direction = order.toLowerCase() === 'desc' ? 'DESC' : 'ASC'
-      orderClause = `ORDER BY ${SORT_FIELDS[sortBy]} ${direction}`
+    // 🔃 Sort (combined value)
+    if (sortBy && SORT_MAP[sortBy]) {
+      orderClause = `ORDER BY ${SORT_MAP[sortBy]}`
     }
 
-    // 📄 SQL Server pagination
     const query = `
       SELECT *
       FROM Gold.fact_sales

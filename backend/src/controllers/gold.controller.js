@@ -40,7 +40,16 @@ export const getGoldCustomers = async (req, res) => {
 
     // ⚠️ ORDER BY is mandatory for pagination
     const query = `
-      SELECT *
+      SELECT 
+      customer_key,
+        customer_id,
+        customer_number,
+        first_name,
+        last_name,
+        country,
+        marital_status,
+        gender,
+        birthdate
       FROM Gold.dim_customers
       ${whereClause}
       ORDER BY customer_number
@@ -97,7 +106,7 @@ export const getGoldProducts = async (req, res) => {
       SELECT *
       FROM Gold.dm_products
       ${whereClause}
-      ORDER BY product_name
+      ORDER BY product_key
       OFFSET @offset ROWS
       FETCH NEXT @limit ROWS ONLY
     `

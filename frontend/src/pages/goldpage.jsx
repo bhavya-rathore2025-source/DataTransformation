@@ -28,23 +28,6 @@ export function GoldPage() {
   const [productPage, setProductPage] = useState(1)
   const [productHasMore, setProductHasMore] = useState(true)
 
-  useEffect(() => {
-    fetchGoldData()
-  }, [])
-  useEffect(() => {
-    // Reset search when tab changes
-    const defaultSearchBy = searchOptions[activeTab][0]?.value || ''
-    setSearchBy(defaultSearchBy)
-    setSearchValue('')
-    setSortBy('')
-    if (activeTab === 'customers' && customerRows.length === 0) {
-      fetchGoldCustomers({ reset: true })
-    }
-    if (activeTab === 'products' && productRows.length === 0) {
-      fetchGoldProducts({ reset: true })
-    }
-  }, [activeTab])
-
   const resetTable = () => {
     if (activeTab === 'sales') {
       setSalesRows([])
@@ -181,6 +164,22 @@ export function GoldPage() {
   useEffect(() => {
     resetTable()
   }, [searchBy])
+  useEffect(() => {
+    fetchGoldData()
+  }, [])
+  useEffect(() => {
+    // Reset search when tab changes
+    const defaultSearchBy = searchOptions[activeTab][0]?.value || ''
+    setSearchBy(defaultSearchBy)
+    setSearchValue('')
+    setSortBy('')
+    if (activeTab === 'customers' && customerRows.length === 0) {
+      fetchGoldCustomers({ reset: true })
+    }
+    if (activeTab === 'products' && productRows.length === 0) {
+      fetchGoldProducts({ reset: true })
+    }
+  }, [activeTab])
 
   /* -----------------------------------
      Pick RAW active dataset (NO work)

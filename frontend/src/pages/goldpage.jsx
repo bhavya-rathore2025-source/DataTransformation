@@ -198,7 +198,7 @@ export function GoldPage() {
     sales: [
       { label: 'Order Number', value: 'order_number' },
       { label: 'Customer Key', value: 'customer_key' },
-      { label: 'Product Key', value: 'product_key' },
+      { label: 'Product Id', value: 'product_id' },
     ],
   }
   const sortOptions = {

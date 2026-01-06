@@ -104,7 +104,7 @@ export const getGoldProducts = async (req, res) => {
     // ⚠️ ORDER BY is mandatory for pagination
     const query = `
       SELECT *
-      FROM Gold.dm_products
+      FROM Gold.dim_products
       ${whereClause}
       ORDER BY product_key
       OFFSET @offset ROWS
@@ -151,7 +151,7 @@ export const getGoldSales = async (req, res) => {
     const SEARCH_FIELDS = {
       order_number: 'order_number',
       customer_key: 'customer_key',
-      product_key: 'product_key',
+      product_id: 'product_id',
     }
 
     // 🔒 Allowed sort options (MATCH FRONTEND EXACTLY)

@@ -7,6 +7,7 @@ export function Dashboard() {
 
   return (
     <>
+      <title>Dashboard</title>
       <div className='layer-container'>
         <div className='layer-card bronze' onClick={() => navigate('/bronze')}>
           <h2>Bronze Layer</h2>

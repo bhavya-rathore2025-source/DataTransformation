@@ -51,6 +51,7 @@ export function BronzePage() {
 
   return (
     <div className='layer-page bronze-page'>
+      <title>Bronze Page</title>
       {/* LEFT SIDE */}
       <div className='bronze-left'>
         <div className='tabs-row'>

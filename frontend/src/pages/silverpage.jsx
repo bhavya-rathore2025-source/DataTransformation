@@ -71,6 +71,7 @@ export function SilverPage() {
 
   return (
     <div className='layer-page silver-page'>
+      <title>Silver Page</title>
       {/* LEFT */}
       <div className='layer-left'>
         {/* Navigation + Tabs */}

@@ -215,6 +215,7 @@ export function GoldPage() {
 
   return (
     <div className='layer-page gold-page'>
+      <title>Gold Page</title>
       {/* LEFT */}
       <div className='layer-left'>
         {/* Navigation + Tabs */}

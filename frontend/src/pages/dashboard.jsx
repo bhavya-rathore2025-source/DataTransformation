@@ -29,6 +29,12 @@ export function Dashboard() {
           <p className='desc'>Aggregated for analytics</p>
           <span>View Final Data →</span>
         </div>
+        <div className='layer-card analytics' onClick={() => navigate('/visualization')}>
+          <h2>Data Visualization</h2>
+          <p>Analytics & insights from Gold layer</p>
+          <p className='desc'>Analytics</p>
+          <span>View Data Analysis →</span>
+        </div>
       </div>
       <div className='about-container'>
         <section className='project-overview'>

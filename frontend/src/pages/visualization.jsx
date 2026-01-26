@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import '../styles/visualization.css'
 import { SalesAnalytics } from '../components/SalesAnalytics'
+import { CustomerAnalytics } from '../components/CustomerAnalytics'
+import { ProductAnalytics } from '../components/ProductAnalytics'
 
 export function Visualization() {
   const [activeTab, setActiveTab] = useState('sales')
@@ -40,7 +42,7 @@ export function Visualization() {
           <div className='viz-section'>
             <h2>Customer Analytics</h2>
             <p>Top customers and geographic distribution.</p>
-            {/* charts will go here */}
+            <CustomerAnalytics />
           </div>
         )}
 
@@ -48,7 +50,7 @@ export function Visualization() {
           <div className='viz-section'>
             <h2>Product Analytics</h2>
             <p>Top products, quantities, and categories.</p>
-            {/* charts will go here */}
+            <ProductAnalytics />
           </div>
         )}
       </div>

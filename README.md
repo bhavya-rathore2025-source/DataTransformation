@@ -1,6 +1,14 @@
 # Data Transformation & Analytics Dashboard  
 (Bronze → Silver → Gold Architecture)
 
+Video Demos: 
+
+https://github.com/user-attachments/assets/82677d79-7aab-4c68-9ea9-0aeffcd2197d
+https://github.com/user-attachments/assets/f466857d-ac37-426e-9e92-d87cbadebac9
+
+
+
+
 ## Overview
 This project demonstrates an end-to-end data transformation and analytics system built using a **Bronze–Silver–Gold** layered architecture.  
 It focuses on real-world data engineering practices such as data cleaning, standardization, performance optimization, and backend-driven data access, along with a frontend dashboard for exploration.
